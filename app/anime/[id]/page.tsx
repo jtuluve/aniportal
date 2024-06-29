@@ -4,7 +4,7 @@ import Link from "next/link";
 import DeleteButton from "./DeleteButton";
 import { getServerSession } from "next-auth";
 
-export default async function page({params}:{params:{id:string}}) {
+export default async function AnimeDetails({params}:{params:{id:string}}) {
   let anime = await getAnimeObjectById(params.id);
   
   const session = await getServerSession();

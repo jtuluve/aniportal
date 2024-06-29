@@ -2,11 +2,10 @@
 
 import Cards from "@/components/Cards";
 import { getAnimesByName } from "@/lib/dbfunctions";
-import { Anime } from "@/lib/interface";
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react";
 
-export default function page() {
+export default function SearchPage() {
   const searchParams = useSearchParams()
   const [animes, setAnimes] = useState<{title: string,image: string,link: string}[]|"loading">("loading");
   

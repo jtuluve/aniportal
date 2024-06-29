@@ -1,5 +1,6 @@
 
 import { getServerSession } from "next-auth";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
@@ -7,7 +8,7 @@ export default async function Home() {
   return (
     <main>
       <div className="w-screen h-screen absolute top-0 overflow-hidden grid place-items-center">
-        <img src="/naruto-bg.jpg" className="absolute min-h-full min-w-full aspect-video opacity-10 max-w-none -z-10"/>
+        <Image src="/naruto-bg.jpg" alt="bg-image" className="absolute min-h-full min-w-full aspect-video opacity-10 max-w-none -z-10"/>
         <div>
           <h1 className="font-[impact] text-center text-6xl leading-tight ">Dive into the Ultimate<br/>Anime Experience!</h1>
           <h4 className="text-3xl text-center">Explore, Discover, and Stay Updated with<br/>the Latest in Anime at AniPortal.</h4>

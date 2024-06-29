@@ -1,7 +1,7 @@
 import Cards from "@/components/Cards";
 import { getPopularAnimes, getSortedAnime } from "@/lib/dbfunctions";
 
-export default async function All() {
+export default async function Popular() {
   let data = await getPopularAnimes();
   let newdata = data?.map((data:any) => ({
     title: data.English || data.Japanese,
