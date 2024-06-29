@@ -10,4 +10,3 @@ export async function upsertAnimeAction(data:FormData) {
     console.error(e);
   }
 }
-

@@ -2,6 +2,8 @@
 import mongoose from "mongoose";
 import { AnimeModel } from "./model";
 import { Anime, AnimeDocument } from "./interface";
+import { getServerSession } from "next-auth";
+import { MongoClient } from "mongodb";
 let isConnected = false;
 export async function connect() {
   if(isConnected) return true;
@@ -48,10 +50,12 @@ export async function getAnimesByName(name:string) {
   try {
     await connect();
     if(!isConnected) return null;
-    return await AnimeModel.find({
-      English: { $regex: /.*${name}.*/i },
-      Synonyms: { $elemMatch: { $regex: /.*${name}.*/i } },
-    });
+    return JSON.parse(JSON.stringify(await AnimeModel.find({
+      $or: [
+        { English: { $regex: `.*${name}.*`, $options: 'i' } },
+        { Synonyms: { $regex: `.*${name}.*`, $options: 'i' } },
+      ],
+    }))) as Anime[];
   } catch (e) {
     console.error(e);
     return null;
@@ -93,20 +97,27 @@ export async function getSortedAnime(){
 
 export async function upsertAnime(data:Anime) {
   try{
+    let session = await getServerSession();
+    if(!session?.user) return null;
     await connect();
     if(!isConnected) return null;
     const {_id, ...rest} = data;
     if(_id) {
-      return JSON.parse(JSON.stringify(await AnimeModel.findByIdAndUpdate(_id, rest, {new:true}))) as Anime;
+      await AnimeModel.findByIdAndUpdate(_id, rest, {new:true});
+      return true;
     }
-    return await JSON.parse(JSON.stringify(AnimeModel.create(data)));
+    await AnimeModel.create(data);
+    return true;
   } catch (e) {
     console.error(e);
+    return false;
   }
 }
 
 export async function deleteAnime(id:string) {
   try{
+    let session = await getServerSession();
+    if(!session?.user) return null;
     await connect();
     if(!isConnected) return null;
     await AnimeModel.findByIdAndDelete(id);
@@ -114,5 +125,20 @@ export async function deleteAnime(id:string) {
   } catch (e) {
     console.error(e);
     return false;
+  }
+}
+
+export async function getPopularAnimes(){
+  try {
+    const client = await MongoClient.connect(process.env.MONGO_URL as string);
+    const db = client.db();
+    const collection = db.collection('famanime');
+    // let data = await AnimeModel.find({English:{$regex:/.*berserk.*/i}}) as AnimeDocument[];
+    // collection.insertMany(data as any);
+    let data = await collection.find().toArray();
+    return JSON.parse(JSON.stringify(data));
+  } catch (e) {
+    console.error(e);
+    return null;
   }
 }

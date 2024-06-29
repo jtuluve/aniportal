@@ -2,20 +2,22 @@
 import { deleteAnime, getAnimeObjectById } from "@/lib/dbfunctions";
 import Link from "next/link";
 import DeleteButton from "./DeleteButton";
+import { getServerSession } from "next-auth";
 
 export default async function page({params}:{params:{id:string}}) {
   let anime = await getAnimeObjectById(params.id);
   
+  const session = await getServerSession();
   if(!anime){
     return <div>Page not found</div>
   }
   
   return (
     <div className="p-6 max-w-5xl mx-auto relative">
-      <div className="absolute top-8 right-0 grid grid-cols-2 rounded overflow-hidden">
+      {session?.user && <div className="absolute top-8 right-0 grid grid-cols-2 rounded overflow-hidden">
         <Link href={`/anime/${anime._id}/edit`} className="bg-green-700 p-1 text-center block">Edit</Link>
         <DeleteButton id={anime?._id as string}/>
-      </div>
+      </div>}
       <div className="fixed w-screen h-screen grid place-items-center left-0 top-0 -z-10 blur-xl opacity-30 bg-[url(/image-not-found.png)] bg-contain">
         <img src={anime.picture} alt={`${anime.English} poster`} className="w-full absolute" />
       </div>

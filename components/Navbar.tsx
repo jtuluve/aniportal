@@ -1,4 +1,5 @@
 import Image from "next/image";
+import SearchInput from './SearchInput';
 
 export default function Navbar() {
   return (
@@ -9,7 +10,9 @@ export default function Navbar() {
       <ul className="list-none flex gap-2 w-2/5 max-w-64 justify-around">
         <li><a href="/popular">MOST POPULAR</a></li>
         <li><a href="/all">A-Z</a></li>
-        <li>O</li>
+        <li>
+          <SearchInput/>
+        </li>
       </ul>
     </nav>
   )
