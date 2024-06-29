@@ -18,7 +18,7 @@ export default function SearchInput() {
   };
   return (
     <>
-      <Image src="/search-icon.svg" alt="search icon" className="h-6 block relative" onClick={()=>setShow(!show)}/>
+      <Image width={24} height={24} src="/search-icon.svg" alt="search icon" className="h-6 block relative" onClick={()=>setShow(!show)}/>
       {show && <div className="absolute top-[105%] right-0 w-1/5">
         <input type="text" name="search" className="w-full p-4 bg-black text-white rounded-xl" onChange={(e)=>setSearch(e.target.value)} onKeyDown={handleKeyPress} value={search}/>
         {search && <span className="absolute top-1/2 right-4 -translate-y-1/2" onClick={(e)=>router.push(`/search?q=${search}`)}>→</span>}
