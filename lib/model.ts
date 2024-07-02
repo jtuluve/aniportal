@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Anime, AnimeDocument } from "./interface";
+import { Anime, Admins } from "./interface";
 
 const AnimeSchema = new mongoose.Schema({
   Score: { type: Number },
@@ -28,4 +28,10 @@ const AnimeSchema = new mongoose.Schema({
   thumbnail: { type: String },
 }, { collection: "anime2" });
 
+const AdminsSchema = new mongoose.Schema({
+  username: { type: String, unique: true },
+  password: { type: String },
+},{collection: "admins"});
+
 export const AnimeModel = mongoose.models?.anime as mongoose.Model<Anime> || mongoose.model<Anime>("anime", AnimeSchema);
+export const AdminsModel = mongoose.models?.admins as mongoose.Model<Admins> || mongoose.model<Admins>("admins", AdminsSchema);

@@ -1,7 +1,7 @@
 "use server";
 import mongoose from "mongoose";
-import { AnimeModel } from "./model";
-import { Anime, AnimeDocument } from "./interface";
+import { AnimeModel, AdminsModel } from "./model";
+import { Admins, Anime, AnimeDocument } from "./interface";
 import { getServerSession } from "next-auth";
 import { MongoClient } from "mongodb";
 let isConnected = false;
@@ -22,8 +22,7 @@ export async function connect() {
 
 export async function getAllAnimes() {
   try {
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     await AnimeModel.deleteMany({picture:{$regex:/.*raw\.github.*/}})
     console.log("done")
     return JSON.parse(JSON.stringify(await AnimeModel.find({}))) as Anime[];
@@ -35,8 +34,7 @@ export async function getAllAnimes() {
 
 export async function getAnimesByChar(char:string) {
   try {
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     return await AnimeModel.find({
       English: { $regex: /${char}.*/i },
     });
@@ -48,8 +46,7 @@ export async function getAnimesByChar(char:string) {
 
 export async function getAnimesByName(name:string) {
   try {
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     return JSON.parse(JSON.stringify(await AnimeModel.find({
       $or: [
         { English: { $regex: `.*${name}.*`, $options: 'i' } },
@@ -64,8 +61,7 @@ export async function getAnimesByName(name:string) {
 
 export async function getAnimeById(id:string) {
   try {
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     return await AnimeModel.findById(id);
   } catch (e) {
     console.error(e);
@@ -75,8 +71,7 @@ export async function getAnimeById(id:string) {
 
 export async function getAnimeObjectById(id:string) {
   try {
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     return JSON.parse(JSON.stringify(await AnimeModel.findById(id))) as Anime;
   } catch (e) {
     console.error(e);
@@ -86,8 +81,7 @@ export async function getAnimeObjectById(id:string) {
 
 export async function getSortedAnime(){
   try {
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     return await AnimeModel.find({}).collation({locale:"en",caseLevel:true}).sort({English:1});
   } catch (e) {
     console.error(e);
@@ -99,8 +93,7 @@ export async function upsertAnime(data:Anime) {
   try{
     let session = await getServerSession();
     if(!session?.user) return null;
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     const {_id, ...rest} = data;
     if(_id) {
       await AnimeModel.findByIdAndUpdate(_id, rest, {new:true});
@@ -118,8 +111,7 @@ export async function deleteAnime(id:string) {
   try{
     let session = await getServerSession();
     if(!session?.user) return null;
-    await connect();
-    if(!isConnected) return null;
+    if(!await connect()) return null;
     await AnimeModel.findByIdAndDelete(id);
     return true;
   } catch (e) {
@@ -137,6 +129,18 @@ export async function getPopularAnimes(){
     // collection.insertMany(data as any);
     let data = await collection.find().toArray();
     return JSON.parse(JSON.stringify(data));
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+export async function adminLogin({username, password}: {username:string, password:string}) {
+  try {
+    if(!await connect()) return null;
+    const user = await AdminsModel.findOne({username, password});
+    return user ? JSON.parse(JSON.stringify(user)) as Admins: null;
   } catch (e) {
     console.error(e);
     return null;

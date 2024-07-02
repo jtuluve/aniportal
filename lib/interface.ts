@@ -55,3 +55,9 @@ export interface AnimeDocument extends Document {
   picture: string;
   thumbnail: string;
 }
+
+export interface Admins {
+  _id: string;
+  username: string;
+  password: string;
+}
