@@ -1,5 +1,5 @@
 
-import { deleteAnime, getAnimeObjectById } from "@/lib/dbfunctions";
+import { getAnimeObjectById } from "@/lib/dbfunctions";
 import Link from "next/link";
 import DeleteButton from "./DeleteButton";
 import { getServerSession } from "next-auth";
@@ -14,7 +14,7 @@ export default async function AnimeDetails({params}:{params:{id:string}}) {
   
   return (
     <div className="p-6 max-w-5xl mx-auto relative">
-      {session?.user && <div className="absolute top-8 right-0 grid grid-cols-2 rounded overflow-hidden">
+      {session?.user && <div className="absolute top-16 right-1 grid grid-cols-2 rounded overflow-hidden">
         <Link href={`/anime/${anime._id}/edit`} className="bg-green-700 p-1 text-center block">Edit</Link>
         <DeleteButton id={anime?._id as string}/>
       </div>}

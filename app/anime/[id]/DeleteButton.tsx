@@ -4,7 +4,12 @@ import React, { useState } from 'react'
 
 export default function DeleteButton({id}:{id:string}) {
   const [ deleteState, setDeleteState ] = useState<"none"|"done"|"failed">("none");
-  
+  const handleDelete = async () => {
+    setDeleteState("none");
+    const res = await deleteAnime(id);
+    if(res) setDeleteState("done");
+    else setDeleteState("failed");
+  }
   return (
     <>
       <button className="bg-red-700 p-1" onClick={async()=>await deleteAnime(id)}>Delete</button>
