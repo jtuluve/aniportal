@@ -79,10 +79,21 @@ export async function getAnimeObjectById(id:string) {
   }
 }
 
-export async function getSortedAnime(){
+export async function getSortedAnime(page = 0):Promise<Array<{_id:string, data:Array<Pick<Anime,"English"|"Japanese"|"picture"|"thumbnail"> & {link:string}>}> | null>  {
   try {
     if(!await connect()) return null;
-    return await AnimeModel.find({}).collation({locale:"en",caseLevel:true}).sort({English:1});
+    let a =  await AnimeModel.aggregate([
+      { $project: { English: 1, Japanese: 1, picture: 1, thumbnail: 1, _id: 1 } },
+      { $addFields: { id: { $toString: "$_id" }, c: { $toUpper: { $substrCP: ["$English", 0, 1]} } } },
+      { $addFields: { link: { $concat: ["/anime/", "$id"] } }},
+      { $project:{id:0, _id:0} },
+      { $group: { _id: "$c", data: { $push: "$$ROOT" }}},
+      { $sort: { "_id": 1 } },
+      { $skip: page * 8 },
+      { $limit: 8 },
+    ]).collation({locale:"en",caseLevel:true});
+    return a;
+    // return await AnimeModel. find({},{ English:1, Japanese:1, picture:1, thumbnail:1, _id:1 }).collation({locale:"en",caseLevel:true}).sort({English:1}).skip(page*50).limit(50)
   } catch (e) {
     console.error(e);
     return null;

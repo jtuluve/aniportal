@@ -1,32 +1,32 @@
+"use client"
+import { useEffect, useState } from "react";
 import Cards from "./Cards";
+import { Anime } from "@/lib/interface";
+import { getSortedAnime } from "@/lib/dbfunctions";
 
 interface Data {
-  title: string
-  image: string
-  link: string
+
 }
 
-export default function SortedCards({data}:{data:Data[]}) {
-  let newData:Array<Data[]> = [];
-  let cur = 0;
-  data.forEach((dataL, index, data) => {
-    if(index===0){
-      return newData.push([dataL]);
+export default function SortedCards({data}:{data:Array<{_id:string, data:Array<Pick<Anime,"English"|"Japanese"|"picture"|"thumbnail"> & {link:string}>}>|null}) {
+  const [newData, setNewData] = useState(data || []);
+  async function fetchData(n:number){
+    const data = await getSortedAnime(n)||[];
+    newData.push(...(data));
+    setNewData([...newData]);
+    if(data.length!=0){
+      setTimeout(()=>fetchData(n+1), 5000);
     }
-    if(dataL.title[0]?.toLowerCase()!==data[index-1].title[0]?.toLowerCase()){
-      cur++;
-      return newData.push([dataL]);
-    }
-    newData[cur].push(dataL);
-  })
+  }
+  useEffect(()=>{fetchData(1)},[]);
   return (
     <div>
-      {newData.map((data) => (
-        <div key={data[0].title[0]}>
-          <h4>{data[0].title[0]?.toUpperCase()}</h4>
-          <Cards data={data} />
+      {newData.map((d:any)=>
+        <div key={d._id}>
+        <h4>{d._id}</h4>
+        <Cards data={d.data} />
         </div>
-      ))}
+      )}
     </div>
   )
 }
