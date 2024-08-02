@@ -12,7 +12,7 @@ export default function SortedCards({data}:{data:Array<{_id:string, data:Array<P
   const [newData, setNewData] = useState(data || []);
   async function fetchData(n:number){
     const data = await getSortedAnime(n)||[];
-    newData.push(...(data));
+    newData.push(...data);
     setNewData([...newData]);
     if(data.length!=0){
       setTimeout(()=>fetchData(n+1), 5000);
@@ -21,7 +21,7 @@ export default function SortedCards({data}:{data:Array<{_id:string, data:Array<P
   useEffect(()=>{fetchData(1)},[]);
   return (
     <div>
-      {newData.map((d:any)=>
+      {newData.map((d)=>
         <div key={d._id}>
         <h4>{d._id}</h4>
         <Cards data={d.data} />

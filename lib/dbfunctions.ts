@@ -86,6 +86,7 @@ export async function getSortedAnime(page = 0):Promise<Array<{_id:string, data:A
       { $project: { English: 1, Japanese: 1, picture: 1, thumbnail: 1, _id: 1 } },
       { $addFields: { id: { $toString: "$_id" }, c: { $toUpper: { $substrCP: ["$English", 0, 1]} } } },
       { $addFields: { link: { $concat: ["/anime/", "$id"] } }},
+      { $sort: { "c": 1 } },
       { $project:{id:0, _id:0} },
       { $group: { _id: "$c", data: { $push: "$$ROOT" }}},
       { $sort: { "_id": 1 } },
