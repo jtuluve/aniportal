@@ -2,6 +2,14 @@
 
 AniPortal is a web application for browsing and managing anime information. Users can search for anime and view details about it.
 
+## 🚀 Features
+
+- 📖 Browse anime details (title, synopsis, genres, etc.)
+- 🔍 Search anime by name
+- ⭐ Admin authentication with NextAuth
+- 💾 Data stored in MongoDB using Mongoose
+- ⚡ Fast performance powered by Next.js 14
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
